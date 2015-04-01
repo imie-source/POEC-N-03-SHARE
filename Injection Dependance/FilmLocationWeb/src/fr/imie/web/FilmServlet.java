@@ -1,8 +1,11 @@
 package fr.imie.web;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,16 +13,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import fr.imie.Iservice.FilmServiceInterface;
+import fr.imie.dto.FilmDTO;
+import fr.imie.service.qualifier.American;
 import fr.imie.service.qualifier.French;
 
 /**
  * Servlet implementation class FilmServlet
  */
-@WebServlet("/films")
+@WebServlet("/films/*")
 public class FilmServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	@Inject private FilmServiceInterface filmService;
+	@Inject private UrlToLanguage urlToLanguage; 
+	@Inject @American private FilmServiceInterface filmServiceUS;
+	@Inject @French private FilmServiceInterface filmServiceFR;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -35,7 +42,16 @@ public class FilmServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		
-		request.setAttribute("films", filmService.getFilms());
+		List<FilmDTO> films = new ArrayList<FilmDTO>();
+		if(urlToLanguage.getLanguage().equals(Language.fr)){
+			films.addAll(filmServiceFR.getFilms());
+		}
+		
+		if(urlToLanguage.getLanguage().equals(Language.us)){
+			films.addAll(filmServiceUS.getFilms());
+		}
+		
+		request.setAttribute("films", films);
 		
 		request.getRequestDispatcher("/WEB-INF/films.jsp").forward(request, response);
 		
