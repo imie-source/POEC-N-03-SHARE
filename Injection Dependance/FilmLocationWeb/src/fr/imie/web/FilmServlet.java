@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import fr.imie.Iservice.FilmServiceInterface;
+import fr.imie.service.qualifier.French;
 
 /**
  * Servlet implementation class FilmServlet
